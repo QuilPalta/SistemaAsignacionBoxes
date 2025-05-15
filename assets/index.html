@@ -52,6 +52,16 @@
     </div>
   </div>
 
+  <!-- Loading Screen -->
+  <div id="loadingScreen" class="min-h-screen flex items-center justify-center bg-white hidden">
+    <div class="text-center">
+      <div class="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-sky-500 border-r-transparent">
+        <span class="sr-only">Cargando...</span>
+      </div>
+      <p class="mt-4 text-gray-600">Autenticando...</p>
+    </div>
+  </div>
+
   <!-- Dashboard -->
   <div id="dashboard" class="hidden min-h-screen flex flex-col">
     <!-- Header -->
@@ -609,11 +619,37 @@
     </div>
   </div>
 
-  <script>
+  <script type="module">
+    import { authenticate } from './auth.js'; // Importar la función de autenticación
     // Login functionality
-    document.getElementById('loginBtn').addEventListener('click', function () {
-      document.getElementById('loginScreen').classList.add('hidden');
-      document.getElementById('dashboard').classList.remove('hidden');
+    document.getElementById('loginBtn').addEventListener('click', async function () {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      
+      try {
+        // Mostrar pantalla de carga
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('loadingScreen').classList.remove('hidden');
+        
+        const response = await authenticate(email, password);
+        
+        if (response.success) {
+          // Actualizar nombre del coordinador en el dashboard
+          document.querySelector('#userMenuBtn span').textContent = response.user.name;
+          document.querySelector('#userMenuBtn div').textContent = response.user.name.charAt(0);
+          
+          // Ocultar carga y mostrar dashboard
+          setTimeout(() => {
+            document.getElementById('loadingScreen').classList.add('hidden');
+            document.getElementById('dashboard').classList.remove('hidden');
+          }, 1000);
+        }
+      } catch (error) {
+        // Mostrar error y volver a mostrar login
+        document.getElementById('loadingScreen').classList.add('hidden');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        alert(error.message || "Error de autenticación");
+      }
     });
 
     // Logout functionality
@@ -638,23 +674,44 @@
       }
     });
 
+    // Spinner functionality
+    function showLoading() {
+      document.getElementById('floatingSpinner').style.display = 'block';
+    }
+
+    function hideLoading() {
+      document.getElementById('floatingSpinner').style.display = 'none';
+    } 
+
     // Tab switching
     document.getElementById('boxesTabBtn').addEventListener('click', function () {
-      document.getElementById('boxesTabContent').classList.remove('hidden');
-      document.getElementById('doctorsTabContent').classList.add('hidden');
-      document.getElementById('boxesTabBtn').classList.add('text-sky-600', 'border-sky-500');
-      document.getElementById('boxesTabBtn').classList.remove('text-gray-500', 'border-transparent');
-      document.getElementById('doctorsTabBtn').classList.add('text-gray-500', 'border-transparent');
-      document.getElementById('doctorsTabBtn').classList.remove('text-sky-600', 'border-sky-500');
+      showLoading();
+      setTimeout(() => {
+      
+        document.getElementById('boxesTabContent').classList.remove('hidden');
+        document.getElementById('doctorsTabContent').classList.add('hidden');
+        document.getElementById('boxesTabBtn').classList.add('text-sky-600', 'border-sky-500');
+        document.getElementById('boxesTabBtn').classList.remove('text-gray-500', 'border-transparent');
+        document.getElementById('doctorsTabBtn').classList.add('text-gray-500', 'border-transparent');
+        document.getElementById('doctorsTabBtn').classList.remove('text-sky-600', 'border-sky-500');
+        
+        hideLoading();
+      }, 500);
     });
 
     document.getElementById('doctorsTabBtn').addEventListener('click', function () {
-      document.getElementById('doctorsTabContent').classList.remove('hidden');
-      document.getElementById('boxesTabContent').classList.add('hidden');
-      document.getElementById('doctorsTabBtn').classList.add('text-sky-600', 'border-sky-500');
-      document.getElementById('doctorsTabBtn').classList.remove('text-gray-500', 'border-transparent');
-      document.getElementById('boxesTabBtn').classList.add('text-gray-500', 'border-transparent');
-      document.getElementById('boxesTabBtn').classList.remove('text-sky-600', 'border-sky-500');
+      showLoading();
+      setTimeout(() => {
+      
+        document.getElementById('doctorsTabContent').classList.remove('hidden');
+        document.getElementById('boxesTabContent').classList.add('hidden');
+        document.getElementById('doctorsTabBtn').classList.add('text-sky-600', 'border-sky-500');
+        document.getElementById('doctorsTabBtn').classList.remove('text-gray-500', 'border-transparent');
+        document.getElementById('boxesTabBtn').classList.add('text-gray-500', 'border-transparent');
+        document.getElementById('boxesTabBtn').classList.remove('text-sky-600', 'border-sky-500');
+
+        hideLoading();
+      }, 500);
     });
 
     // Box modal functionality
@@ -882,6 +939,10 @@
   <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'93fdcf53a250b4e0',t:'MTc0NzI2MTUxMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
   <iframe height="1" width="1"
     style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
+  <!-- Spinner flotante -->
+  <div id="floatingSpinner" class="floating-spinner">
+    <div class="spinner"></div>
+  </div>
 </body>
 
 </html>
