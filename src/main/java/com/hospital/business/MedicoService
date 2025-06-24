@@ -1,0 +1,90 @@
+package com.hospital.business;
+
+import com.hospital.data.MedicoDAO;
+import com.hospital.entities.Medico;
+import com.hospital.entities.Asignacion;
+import java.sql.SQLException;
+import java.util.List;
+
+public class MedicoService {
+    private MedicoDAO medicoDAO;
+    
+    public MedicoService() {
+        this.medicoDAO = new MedicoDAO();
+    }
+    
+    public List<Medico> buscarMedicosPorEspecialidad(String especialidad) throws Exception {
+        if (especialidad == null || especialidad.trim().isEmpty()) {
+            throw new IllegalArgumentException("La especialidad no puede estar vacía");
+        }
+        
+        try {
+            return medicoDAO.buscarPorEspecialidad(especialidad);
+        } catch (SQLException e) {
+            throw new Exception("Error al buscar médicos: " + e.getMessage(), e);
+        }
+    }
+    
+    public String agregarMedico(String rut, String nombre, String especialidad) throws Exception {
+        // Validaciones de negocio
+        if (rut == null || rut.trim().isEmpty()) {
+            throw new IllegalArgumentException("El RUT no puede estar vacío");
+        }
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre no puede estar vacío");
+        }
+        if (especialidad == null || especialidad.trim().isEmpty()) {
+            throw new IllegalArgumentException("La especialidad no puede estar vacía");
+        }
+        
+        // Validar formato de RUT (ejemplo básico)
+        if (!validarFormatoRut(rut)) {
+            throw new IllegalArgumentException("Formato de RUT inválido");
+        }
+        
+        try {
+            Medico medico = new Medico(rut, nombre, especialidad, "Disponible");
+            medicoDAO.insertar(medico);
+            return "Médico agregado exitosamente";
+        } catch (SQLException e) {
+            throw new Exception("Error al agregar médico: " + e.getMessage(), e);
+        }
+    }
+    
+    public String cambiarEstadoMedico(String rut, int estado) throws Exception {
+        if (rut == null || rut.trim().isEmpty()) {
+            throw new IllegalArgumentException("El RUT no puede estar vacío");
+        }
+        
+        if (estado < 0 || estado > 1) {
+            throw new IllegalArgumentException("Estado inválido. Debe ser 0 (disponible) o 1 (ocupado)");
+        }
+        
+        try {
+            boolean actualizado = medicoDAO.actualizarEstado(rut, estado);
+            if (!actualizado) {
+                return "No se encontró el médico con RUT: " + rut;
+            }
+            return "Estado del médico actualizado exitosamente";
+        } catch (SQLException e) {
+            throw new Exception("Error al cambiar estado: " + e.getMessage(), e);
+        }
+    }
+    
+    public List<Asignacion> obtenerHorariosMedico(String rutMedico) throws Exception {
+        if (rutMedico == null || rutMedico.trim().isEmpty()) {
+            throw new IllegalArgumentException("El RUT del médico no puede estar vacío");
+        }
+        
+        try {
+            return medicoDAO.obtenerHorarios(rutMedico);
+        } catch (SQLException e) {
+            throw new Exception("Error al obtener horarios: " + e.getMessage(), e);
+        }
+    }
+    
+    private boolean validarFormatoRut(String rut) {
+        // Implementar validación básica de RUT chileno
+        return rut.matches("\\d{7,8}-[0-9kK]");
+    }
+}

@@ -1,0 +1,38 @@
+package com.hospital.entities;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class Asignacion implements Serializable {
+    private int id;
+    private int boxId;
+    private String tipoBox;
+    private Timestamp horaInicio;
+    private Timestamp horaFin;
+    
+    public Asignacion() {}
+    
+    public Asignacion(int id, int boxId, String tipoBox, Timestamp horaInicio, Timestamp horaFin) {
+        this.id = id;
+        this.boxId = boxId;
+        this.tipoBox = tipoBox;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+    }
+    
+    // Getters y Setters
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    
+    public int getBoxId() { return boxId; }
+    public void setBoxId(int boxId) { this.boxId = boxId; }
+    
+    public String getTipoBox() { return tipoBox; }
+    public void setTipoBox(String tipoBox) { this.tipoBox = tipoBox; }
+    
+    public Timestamp getHoraInicio() { return horaInicio; }
+    public void setHoraInicio(Timestamp horaInicio) { this.horaInicio = horaInicio; }
+    
+    public Timestamp getHoraFin() { return horaFin; }
+    public void setHoraFin(Timestamp horaFin) { this.horaFin = horaFin; }
+}

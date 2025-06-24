@@ -1,0 +1,116 @@
+package com.hospital.business;
+
+import com.hospital.data.BoxDAO;
+import com.hospital.data.MedicoDAO;
+import com.hospital.data.AsignacionDAO;
+import com.hospital.entities.Box;
+import java.sql.*;
+import java.util.List;
+
+public class BoxService {
+    private BoxDAO boxDAO;
+    private MedicoDAO medicoDAO;
+    private AsignacionDAO asignacionDAO;
+    
+    public BoxService() {
+        this.boxDAO = new BoxDAO();
+        this.medicoDAO = new MedicoDAO();
+        this.asignacionDAO = new AsignacionDAO();
+    }
+    
+    public String asignarMedicoABox(int boxId, String medicoRut, 
+                                   Timestamp horaInicio, Timestamp horaFin) throws Exception {
+        // Validaciones de negocio
+        if (boxId <= 0) {
+            throw new IllegalArgumentException("ID de box inválido");
+        }
+        if (medicoRut == null || medicoRut.trim().isEmpty()) {
+            throw new IllegalArgumentException("RUT del médico no puede estar vacío");
+        }
+        if (horaInicio == null || horaFin == null) {
+            throw new IllegalArgumentException("Las horas de inicio y fin son obligatorias");
+        }
+        if (horaInicio.after(horaFin)) {
+            throw new IllegalArgumentException("La hora de inicio debe ser anterior a la hora de fin");
+        }
+        
+        try {
+            // Verificar disponibilidad
+            if (!boxDAO.existeYDisponible(boxId)) {
+                return "Box no disponible o no existe";
+            }
+            
+            if (!medicoDAO.existeYDisponible(medicoRut)) {
+                return "Médico no disponible o no existe";
+            }
+            
+            // Realizar asignación en transacción
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                conn.setAutoCommit(false);
+                
+                try {
+                    // Crear asignación
+                    asignacionDAO.crearAsignacion(boxId, medicoRut, horaInicio, horaFin);
+                    
+                    // Actualizar estados
+                    boxDAO.actualizarEstado(boxId, 1);
+                    medicoDAO.actualizarEstado(medicoRut, 1);
+                    
+                    conn.commit();
+                    return "Asignación creada exitosamente";
+                } catch (Exception e) {
+                    conn.rollback();
+                    throw e;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al asignar médico: " + e.getMessage(), e);
+        }
+    }
+    
+    public List<Box> filtrarBoxesPorEstado(int estado) throws Exception {
+        if (estado < 0 || estado > 1) {
+            throw new IllegalArgumentException("Estado inválido. Debe ser 0 (disponible) o 1 (ocupado)");
+        }
+        
+        try {
+            return boxDAO.filtrarPorEstado(estado);
+        } catch (SQLException e) {
+            throw new Exception("Error al filtrar boxes: " + e.getMessage(), e);
+        }
+    }
+    
+    public String liberarBox(int boxId, int asignacionId) throws Exception {
+        if (boxId <= 0 || asignacionId <= 0) {
+            throw new IllegalArgumentException("IDs inválidos");
+        }
+        
+        try {
+            try (Connection conn = DatabaseConnection.getConnection()) {
+                conn.setAutoCommit(false);
+                
+                try {
+                    // Obtener RUT del médico antes de eliminar la asignación
+                    String medicoRut = asignacionDAO.obtenerMedicoRutPorAsignacion(asignacionId);
+                    
+                    if (medicoRut == null) {
+                        return "Asignación no encontrada";
+                    }
+                    
+                    // Liberar recursos
+                    boxDAO.actualizarEstado(boxId, 0);
+                    medicoDAO.actualizarEstado(medicoRut, 0);
+                    asignacionDAO.eliminarAsignacion(asignacionId);
+                    
+                    conn.commit();
+                    return "Box liberado exitosamente";
+                } catch (Exception e) {
+                    conn.rollback();
+                    throw e;
+                }
+            }
+        } catch (SQLException e) {
+            throw new Exception("Error al liberar box: " + e.getMessage(), e);
+        }
+    }
+}

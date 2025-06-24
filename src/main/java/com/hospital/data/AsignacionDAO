@@ -1,0 +1,100 @@
+package com.hospital.data;
+
+import com.hospital.entities.AsignacionDetallada;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+
+public class AsignacionDAO {
+    
+    public void crearAsignacion(int boxId, String medicoRut, 
+                               Timestamp horaInicio, Timestamp horaFin) throws SQLException {
+        String sql = "INSERT INTO Asignaciones (box_id, medico_rut, hora_inicio, hora_fin) VALUES (?, ?, ?, ?)";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, boxId);
+            pstmt.setString(2, medicoRut);
+            pstmt.setTimestamp(3, horaInicio);
+            pstmt.setTimestamp(4, horaFin);
+            pstmt.executeUpdate();
+        }
+    }
+    
+    public void eliminarAsignacion(int asignacionId) throws SQLException {
+        String sql = "DELETE FROM Asignaciones WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, asignacionId);
+            pstmt.executeUpdate();
+        }
+    }
+    
+    public String obtenerMedicoRutPorAsignacion(int asignacionId) throws SQLException {
+        String sql = "SELECT medico_rut FROM Asignaciones WHERE id = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, asignacionId);
+            ResultSet rs = pstmt.executeQuery();
+            
+            if (rs.next()) {
+                return rs.getString("medico_rut");
+            }
+            return null;
+        }
+    }
+    
+    public List<AsignacionDetallada> obtenerTodasLasAsignaciones() throws SQLException {
+        List<AsignacionDetallada> asignaciones = new ArrayList<>();
+        String sql = "SELECT a.id, b.ID as box_id, b.tipo as box_tipo, " +
+                     "m.RUT as medico_rut, m.nombre as medico_nombre, m.especialidad, " +
+                     "a.hora_inicio, a.hora_fin " +
+                     "FROM Asignaciones a " +
+                     "JOIN Boxes b ON a.box_id = b.ID " +
+                     "JOIN Medicos m ON a.medico_rut = m.RUT " +
+                     "ORDER BY a.hora_inicio";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                asignaciones.add(new AsignacionDetallada(
+                    rs.getInt("id"),
+                    rs.getInt("box_id"),
+                    rs.getString("box_tipo"),
+                    rs.getString("medico_rut"),
+                    rs.getString("medico_nombre"),
+                    rs.getString("especialidad"),
+                    rs.getTimestamp("hora_inicio"),
+                    rs.getTimestamp("hora_fin")
+                ));
+            }
+        }
+        return asignaciones;
+    }
+    
+    public Map<String, Integer> obtenerReporteOcupacionBoxes() throws SQLException {
+        Map<String, Integer> reporte = new HashMap<>();
+        String sql = "SELECT e.nombre as estado, COUNT(*) as cantidad " +
+                     "FROM Boxes b JOIN Estados e ON b.estado = e.id " +
+                     "GROUP BY e.nombre";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                reporte.put(rs.getString("estado"), rs.getInt("cantidad"));
+            }
+        }
+        return reporte;
+    }
+}
