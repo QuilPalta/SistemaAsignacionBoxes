@@ -1192,6 +1192,10 @@
                 padding-right: 2rem
             }
         }
+
+        .sidebar-visible {
+            transform: translateX(0) !important;
+        }
     </style>
 </head>
 
@@ -1354,20 +1358,15 @@
                             <p class="text-xs text-gray-500" id="especialidadMedico">Cardiología</p>
                         </div>
                         <div class="relative">
-                            <button id="userMenuButton" class="flex items-center focus:outline-none">
+                            <button id="medicoMenuButton" class="flex items-center focus:outline-none">
                                 <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold"
                                     id="inicialesMedico">
                                     JP
                                 </div>
                             </button>
-                            <div id="userMenu"
+                            <div id="medicoMenu"
                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi
-                                    perfil</a>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Configuración</a>
-                                <div class="border-t border-gray-100"></div>
-                                <a href="#" id="btnCerrarSesion"
+                                <a href="#" id="btnCerrarSesionMedico"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar sesión</a>
                             </div>
                         </div>
@@ -2042,7 +2041,8 @@
         <div id="portalCoordinadorView" class="app-view min-h-screen flex flex-col">
             <!-- Header -->
             <header class="bg-white shadow-sm">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div id="headerCoordinador"
+                    class="w-full py-4 pl-8 flex justify-between items-center transition-all duration-300">
                     <div class="flex items-center">
                         <button id="btnToggleSidebar" class="text-gray-600 text-2xl mr-4 focus:outline-none">
                             <i class="fas fa-bars"></i>
@@ -2053,26 +2053,21 @@
                         <h1 class="ml-4 text-xl font-semibold text-gray-800">Portal Coordinador</h1>
                     </div>
 
-                    <div class="flex items-center space-x-4">
+                    <div class="flex items-center space-x-4 pr-8">
                         <div class="mr-4 text-right">
                             <p class="text-sm font-medium text-gray-900" id="nombreCoordinador">Dr. Juan Pérez</p>
                             <p class="text-xs text-gray-500">Coordinador</p>
                         </div>
                         <div class="relative">
-                            <button id="userMenuButton" class="flex items-center focus:outline-none">
+                            <button id="coordinadorMenuButton" class="flex items-center focus:outline-none">
                                 <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold"
                                     id="inicialesCoordinador">
                                     JP
                                 </div>
                             </button>
-                            <div id="userMenu"
+                            <div id="coordinadorMenu"
                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 hidden">
-                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Mi
-                                    perfil</a>
-                                <a href="#"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Configuración</a>
-                                <div class="border-t border-gray-100"></div>
-                                <a href="#" id="btnCerrarSesion"
+                                <a href="#" id="btnCerrarSesionCoordinador"
                                     class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Cerrar sesión</a>
                             </div>
                         </div>
@@ -2096,7 +2091,7 @@
             <div class="flex-grow flex">
                 <!-- Sidebar -->
                 <aside id="sidebarCoordinador"
-                    class="w-64 bg-white shadow-md fixed inset-y-0 left-0 transform -translate-x-full md:translate-x-0 md:relative md:block transition-transform duration-300 ease-in-out z-40">
+                    class="w-64 bg-white shadow-md fixed inset-y-0 left-0 transform transition-transform duration-300 ease-in-out z-40 -translate-x-full">
                     <nav class="mt-5 px-2">
                         <a href="#"
                             class="sidebar-link active group flex items-center px-4 py-3 text-base font-medium rounded-md mb-1"
@@ -2362,22 +2357,6 @@
             }
         });
 
-
-        // Cerrar sesión
-        document.getElementById('btnCerrarSesion').addEventListener('click', function (e) {
-            e.preventDefault();
-            showLoading();
-
-            setTimeout(function () {
-                hideLoading();
-                // Limpiar formularios
-                document.getElementById('medicoForm').reset();
-                document.getElementById('coordinadorForm').reset();
-                // Volver a la vista de login
-                switchView('loginView');
-            }, 1000);
-        });
-
         // Event listeners para el sidebar de Portal Médicos
         document.getElementById('tab-disponibilidad').addEventListener('click', function (e) {
             e.preventDefault();
@@ -2440,20 +2419,66 @@
             switchTab('asignaciones-coordinador');
         });
 
-        // Toggle del menú de usuario
-        document.getElementById('userMenuButton').addEventListener('click', function () {
-            const menu = document.getElementById('userMenu');
-            menu.classList.toggle('hidden');
-        });
+        // Toggle menú usuario médico
+        const medicoMenuButton = document.getElementById('medicoMenuButton');
+        const medicoMenu = document.getElementById('medicoMenu');
+        if (medicoMenuButton && medicoMenu) {
+            medicoMenuButton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                medicoMenu.classList.toggle('hidden');
+            });
+        }
 
-        // Cerrar menú de usuario cuando se clickea fuera de el.
+        // Toggle menú usuario coordinador
+        const coordinadorMenuButton = document.getElementById('coordinadorMenuButton');
+        const coordinadorMenu = document.getElementById('coordinadorMenu');
+        if (coordinadorMenuButton && coordinadorMenu) {
+            coordinadorMenuButton.addEventListener('click', function (e) {
+                e.stopPropagation();
+                coordinadorMenu.classList.toggle('hidden');
+            });
+        }
+
+        // Cerrar ambos menús si se hace clic fuera
         document.addEventListener('click', function (e) {
-            const menu = document.getElementById('userMenu');
-            const button = document.getElementById('userMenuButton');
-            if (!menu.contains(e.target) && !button.contains(e.target)) {
-                menu.classList.add('hidden');
+            if (medicoMenu && !medicoMenu.contains(e.target) && !medicoMenuButton.contains(e.target)) {
+                medicoMenu.classList.add('hidden');
+            }
+            if (coordinadorMenu && !coordinadorMenu.contains(e.target) && !coordinadorMenuButton.contains(e.target)) {
+                coordinadorMenu.classList.add('hidden');
             }
         });
+
+        // Cerrar sesión Médico
+        document.getElementById('btnCerrarSesionMedico').addEventListener('click', function (e) {
+            e.preventDefault();
+            showLoading();
+
+            setTimeout(function () {
+                hideLoading();
+                // Limpiar formularios
+                document.getElementById('medicoForm').reset();
+                document.getElementById('coordinadorForm').reset();
+                // Volver a la vista de login
+                switchView('loginView');
+            }, 1000);
+        });
+
+        // Cerrar sesión Coordinador
+        document.getElementById('btnCerrarSesionCoordinador').addEventListener('click', function (e) {
+            e.preventDefault();
+            showLoading();
+
+            setTimeout(function () {
+                hideLoading();
+                // Limpiar formularios
+                document.getElementById('medicoForm').reset();
+                document.getElementById('coordinadorForm').reset();
+                // Volver a la vista de login
+                switchView('loginView');
+            }, 1000);
+        });
+
 
         // Ver todas las ofertas link
         document.getElementById('verTodasOfertas').addEventListener('click', function (e) {
@@ -2709,11 +2734,27 @@
 
         // Manejador para ocultar/mostrar el sidebar
 
-        const btnToggleSidebar = document.getElementById('btnToggleSidebar');
-        const sidebar = document.getElementById('sidebarCoordinador');
 
-        btnToggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('-translate-x-full');
+        // Mostrar/Ocultar menú hamburguesa
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.getElementById('btnToggleSidebar');
+            const sidebar = document.getElementById('sidebarCoordinador');
+            const header = document.getElementById('headerCoordinador');
+
+            toggleButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebar.classList.toggle('sidebar-visible');
+                header.classList.toggle('pl-72');
+
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!sidebar.contains(e.target) && !toggleButton.contains(e.target)) {
+                    sidebar.classList.remove('sidebar-visible');
+                    header.classList.remove('pl-72');
+
+                }
+            });
         });
 
     </script>
