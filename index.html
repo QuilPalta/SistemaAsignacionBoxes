@@ -1196,6 +1196,14 @@
         .sidebar-visible {
             transform: translateX(0) !important;
         }
+
+        .celda-seleccionada {
+            background-color: #D1FAE5 !important;
+            /* verde claro */
+            border: 2px solid #10B981;
+            /* verde fuerte */
+            transform: scale(1.02);
+        }
     </style>
 </head>
 
@@ -1345,17 +1353,23 @@
         <div id="portalMedicoView" class="app-view min-h-screen flex flex-col">
             <!-- Header -->
             <header class="bg-white shadow-sm">
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                <div id="headerMedico"
+                    class="w-full py-4 pl-8 flex justify-between items-center transition-all duration-300">
                     <div class="flex items-center">
+                        <button id="btnToggleSidebarMedico"
+                            class="hidden md:inline-block text-gray-600 text-2xl mr-4 focus:outline-none">
+                            <i class="fas fa-bars"></i>
+                        </button>
                         <img src="https://www.redsalud.cl/assets/media/logo-redsalud.svg" alt="RedSalud Logo"
                             class="h-10">
                         <div class="ml-4 h-8 w-px bg-gray-200"></div>
                         <h1 class="ml-4 text-xl font-semibold text-gray-800">Portal Médico</h1>
                     </div>
-                    <div class="flex items-center">
+
+                    <div class="flex items-center space-x-4 pr-8">
                         <div class="mr-4 text-right">
                             <p class="text-sm font-medium text-gray-900" id="nombreMedico">Dr. Juan Pérez</p>
-                            <p class="text-xs text-gray-500" id="especialidadMedico">Cardiología</p>
+                            <p class="text-xs text-gray-500" id="especialidadMedico">Cardiologia</p>
                         </div>
                         <div class="relative">
                             <button id="medicoMenuButton" class="flex items-center focus:outline-none">
@@ -1371,12 +1385,13 @@
                             </div>
                         </div>
                     </div>
-                </div>
             </header>
 
             <div class="flex-grow flex">
+
                 <!-- Sidebar -->
-                <aside class="w-64 bg-white shadow-md hidden md:block">
+                <aside id="sidebarMedico"
+                    class="w-64 bg-white shadow-md fixed inset-y-0 left-0 transform transition-transform duration-300 ease-in-out z-40 -translate-x-full">
                     <nav class="mt-5 px-2">
                         <a href="#"
                             class="sidebar-link active group flex items-center px-4 py-3 text-base font-medium rounded-md mb-1"
@@ -2044,7 +2059,8 @@
                 <div id="headerCoordinador"
                     class="w-full py-4 pl-8 flex justify-between items-center transition-all duration-300">
                     <div class="flex items-center">
-                        <button id="btnToggleSidebar" class="text-gray-600 text-2xl mr-4 focus:outline-none">
+                        <button id="btnToggleSidebarCoordinador"
+                            class="hidden md:inline-block text-gray-600 text-2xl mr-4 focus:outline-none">
                             <i class="fas fa-bars"></i>
                         </button>
                         <img src="https://www.redsalud.cl/assets/media/logo-redsalud.svg" alt="RedSalud Logo"
@@ -2096,19 +2112,19 @@
                         <a href="#"
                             class="sidebar-link active group flex items-center px-4 py-3 text-base font-medium rounded-md mb-1"
                             id="tab-medicos">
-                            <i class="fas fa-calendar-alt mr-3 text-lg"></i>
+                            <i class="fas fa-user-md mr-3 text-lg"></i>
                             Médicos
                         </a>
                         <a href="#"
                             class="sidebar-link group flex items-center px-4 py-3 text-base font-medium text-gray-600 rounded-md mb-1"
                             id="tab-boxes">
-                            <i class="fas fa-history mr-3 text-lg"></i>
+                            <i class="fas fa-hospital mr-3 text-lg"></i>
                             Boxes
                         </a>
                         <a href="#"
                             class="sidebar-link group flex items-center px-4 py-3 text-base font-medium text-gray-600 rounded-md mb-1"
                             id="tab-asignaciones-coordinador">
-                            <i class="fas fa-clipboard-check mr-3 text-lg"></i>
+                            <i class="fas fa-calendar-check mr-3 text-lg"></i>
                             Asignaciones
                         </a>
                     </nav>
@@ -2119,19 +2135,19 @@
                     <a href="#"
                         class="flex-1 text-center py-4 px-2 text-xs font-medium text-gray-500 hover:text-gray-900"
                         id="mobile-tab-medicos">
-                        <i class="fas fa-calendar-alt block text-lg mb-1"></i>
+                        <i class="fas fa-user-md mr-3 text-lg"></i>
                         Médicos
                     </a>
                     <a href="#"
                         class="flex-1 text-center py-4 px-2 text-xs font-medium text-gray-500 hover:text-gray-900"
                         id="mobile-tab-boxes">
-                        <i class="fas fa-history block text-lg mb-1"></i>
+                        <i class="fas fa-hospital mr-3 text-lg"></i>
                         Boxes
                     </a>
                     <a href="#"
                         class="flex-1 text-center py-4 px-2 text-xs font-medium text-gray-500 hover:text-gray-900"
                         id="mobile-tab-asignaciones-coordinador">
-                        <i class="fas fa-clipboard-check block text-lg mb-1"></i>
+                        <i class="fas fa-calendar-check mr-3 text-lg"></i>
                         Asignaciones
                     </a>
                 </div>
@@ -2173,7 +2189,11 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="mt-4 flex justify-end">
+                            <div class="mt-4 flex justify-end space-x-2">
+                                <button id="btnLimpiarFiltrosMedicos"
+                                    class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">
+                                    Limpiar filtros
+                                </button>
                                 <button id="btnAplicarFiltrosMedicos"
                                     class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">
                                     Aplicar filtros
@@ -2204,16 +2224,172 @@
                                     <!-- Se llenará dinámicamente -->
                                 </tbody>
                             </table>
+                            <div id="paginacionMedicos" class="mt-4 flex justify-center"></div>
                         </div>
 
                     </div>
                     <!-- Boxes Tab -->
-                    <div id="content-boxes" class="tab-content active">
+                    <div id="content-boxes" class="tab-content hidden">
+                        <!-- Gestión de Boxes -->
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="mb-6">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-2">Gestión de Boxes</h2>
+                                <p class="text-gray-600">Administre los boxes disponibles en la clínica</p>
+                            </div>
+                            <div class="flex justify-end mb-4"></div>
+                            <button id="btnAbrirModalBox"
+                                class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">
+                                Crear Box
+                            </button>
+                        </div>
 
+                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-4">Filtros</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                                    <input type="text" id="filtroNombreBox"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                                    <select id="filtroEstadoBox"
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                        <option value="">Todos</option>
+                                        <option value="libre">Libre</option>
+                                        <option value="asignado">Asignado</option>
+                                        <option value="ocupado">Ocupado</option>
+                                        <option value="mantención">Mantención</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-4 flex justify-end space-x-2">
+                                <button id="btnLimpiarFiltrosBoxes"
+                                    class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">
+                                    Limpiar filtros
+                                </button>
+                                <button id="btnAplicarFiltrosBoxes"
+                                    class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">
+                                    Aplicar filtros
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-lg shadow-md overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Nombre</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Piso</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Tipo</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Estado</th>
+                                        <th
+                                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                            Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tablaBoxesBody" class="bg-white divide-y divide-gray-200">
+                                    <!-- Se llenará dinámicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="paginacionBoxes" class="mt-4 flex justify-center"></div>
                     </div>
                     <!-- Asignaciones Tab -->
-                    <div id="content-asignaciones-coordinador" class="tab-content active">
+                    <div id="content-asignaciones-coordinador" class="tab-content hidden">
+                        <!-- Asignación de Boxes -->
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-gray-800 mb-2">Asignación de Boxes</h2>
+                            <p class="text-gray-600">Visualice y gestione la asignación semanal de boxes</p>
+                        </div>
+                        <div class="mb-4 grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <div>
+                                <label for="buscarNombreBox" class="block text-sm font-medium text-gray-700 mb-1">Nombre
+                                    del Box</label>
+                                <input type="text" id="buscarNombreBox"
+                                    class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                    placeholder="Ej: Box 101">
+                            </div>
+                            <div>
+                                <label for="buscarPisoBox"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Piso</label>
+                                <select id="buscarPisoBox" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    <option value="">Todos</option>
+                                    <option value="1">Piso 1</option>
+                                    <option value="2">Piso 2</option>
+                                    <option value="3">Piso 3</option>
+                                    <option value="4">Piso 4</option>
+                                    <option value="5">Piso 5</option>
+                                    <option value="6">Piso 6</option>
+                                    <option value="7">Piso 7</option>
+                                    <option value="8">Piso 8</option>
+                                    <option value="9">Piso 9</option>
+                                    <option value="10">Piso 10</option>
+                                    <option value="11">Piso 11</option>
+                                    <option value="12">Piso 12</option>
+                                    <option value="13">Piso 13</option>
+                                    <option value="14">Piso 14</option>
+                                    <option value="15">Piso 15</option>
+                                    <option value="16">Piso 16</option>
+                                    <option value="17">Piso 17</option>
+                                    <option value="18">Piso 18</option>
+                                    <option value="19">Piso 19</option>
+                                    <option value="20">Piso 20</option>
+                                </select>
 
+                            </div>
+                            <div>
+                                <label for="buscarEstadoBox"
+                                    class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                                <select id="buscarEstadoBox" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                                    <option value="">Todos</option>
+                                    <option value="libre">Libre</option>
+                                    <option value="asignado">Asignado</option>
+                                    <option value="ocupado">Ocupado</option>
+                                    <option value="mantención">Mantención</option>
+                                </select>
+                            </div>
+                            <div>
+                                <button onclick="buscarBoxes()"
+                                    class="btn-redsalud text-white px-4 py-2 rounded-md w-full">Buscar</button>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="comboBoxSeleccionado"
+                                class="block text-sm font-medium text-gray-700 mb-1">Resultados</label>
+                            <select id="comboBoxSeleccionado" class="w-full px-3 py-2 border border-gray-300 rounded-md"
+                                onchange="renderTablaAsignaciones()">
+                                <option value="">Seleccione un box</option>
+                            </select>
+                        </div>
+
+
+                        <table id="tablaAsignaciones"
+                            class="min-w-full table-fixed border border-gray-200 text-sm text-center">
+                            <thead>
+                                <tr>
+                                    <th class="border px-2 py-1 bg-gray-100">Hora</th>
+                                    <th class="border px-2 py-1 bg-gray-100">Lunes</th>
+                                    <th class="border px-2 py-1 bg-gray-100">Martes</th>
+                                    <th class="border px-2 py-1 bg-gray-100">Miércoles</th>
+                                    <th class="border px-2 py-1 bg-gray-100">Jueves</th>
+                                    <th class="border px-2 py-1 bg-gray-100">Viernes</th>
+                                    <th class="border px-2 py-1 bg-gray-100">Sábado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cuerpoAsignaciones">
+                                <!-- Se llenará dinámicamente -->
+                            </tbody>
+                        </table>
                     </div>
                 </main>
             </div>
@@ -2256,37 +2432,92 @@
         </div>
     </div>
 
-    <script>
-        // Base de datos de médicos para demo
-        const medicosBD = {
-            'juan.perez@redsalud.cl': {
-                nombre: 'Dr. Juan Pérez',
-                especialidad: 'Cardiología',
-                iniciales: 'JP'
-            },
-            'maria.gomez@redsalud.cl': {
-                nombre: 'Dra. María Gómez',
-                especialidad: 'Pediatría',
-                iniciales: 'MG'
-            },
-            'carlos.rodriguez@redsalud.cl': {
-                nombre: 'Dr. Carlos Rodríguez',
-                especialidad: 'Traumatología',
-                iniciales: 'CR'
-            }
-        };
+    <!-- Modal para agregar/editar boxes -->
+    <div id="modalBox" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <h3 id="modalTituloBox" class="text-lg font-semibold text-gray-800 mb-4">Crear Box</h3>
+            <form id="formBox" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre del Box</label>
+                    <input type="text" id="nombreBoxInput" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Piso</label>
+                    <input type="number" id="pisoBoxInput" min="1" max="20"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+                    <select id="tipoBoxInput" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        <option value="">Seleccione un tipo</option>
+                        <option value="consulta">Consulta</option>
+                        <option value="is">IS</option>
+                        <option value="vacunatorio">Vacunatorio</option>
+                        <option value="oficina">Oficina</option>
+                        <option value="otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Estado</label>
+                    <select id="estadoBoxInput" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+                        <option value="libre">Libre</option>
+                        <option value="asignado">Asignado</option>
+                        <option value="ocupado">Ocupado</option>
+                        <option value="mantención">En mantención</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" id="btnCancelarModalBox"
+                        class="px-4 py-2 border border-gray-300 rounded-md text-sm">Cancelar</button>
+                    <button type="submit" id="btnGuardarBox"
+                        class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">Crear</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
-        // Show loading overlay function
+    <!-- Modal para la asignación/edición de boxes -->
+    <div id="modalAsignacion" class="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Asignar Oferta</h3>
+            <p id="infoAsignacion" class="text-sm text-gray-600 mb-4"></p>
+            <form id="formAsignacion" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Seleccionar oferta disponible</label>
+                    <select id="ofertaDisponible" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <option value="">Seleccione una oferta</option>
+                        <option value="1">Oferta 1 (08:15 - 09:00)</option>
+                        <option value="2">Oferta 2 (09:00 - 10:00)</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" onclick="cerrarModalAsignacion()"
+                        class="px-4 py-2 border border-gray-300 rounded-md text-sm">Cancelar</button>
+                    <button type="submit"
+                        class="btn-redsalud text-white py-2 px-4 rounded-md font-medium">Asignar</button>
+                    <button type="button" id="btnEliminarAsignacion"
+                        class="px-4 py-2 border border-red-500 text-red-600 rounded-md text-sm hidden"
+                        onclick="eliminarAsignacion()">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        let celdasSeleccionadas = [];
+
+        // Mostrar el loading
         function showLoading() {
             document.getElementById('loadingOverlay').style.display = 'flex';
         }
 
-        // Hide loading overlay function
+        // Esconder el loading
         function hideLoading() {
             document.getElementById('loadingOverlay').style.display = 'none';
         }
 
-        // Switch between app views
+        // Funcionalidad para cambiar entre vistas
         function switchView(viewId) {
             document.querySelectorAll('.app-view').forEach(view => {
                 view.classList.remove('active');
@@ -2294,24 +2525,31 @@
             document.getElementById(viewId).classList.add('active');
         }
 
-        // Tab switching functionality
+        // Funcionalidad para cambiar entre tabs
         function switchTab(tabId) {
-            // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.add('hidden');
                 tab.classList.remove('active');
             });
 
-            // Show selected tab content
-            document.getElementById('content-' + tabId).classList.add('active');
+            const selected = document.getElementById('content-' + tabId);
+            if (selected) {
+                selected.classList.remove('hidden');
+                selected.classList.add('active');
+            }
 
-            // Update sidebar links
             document.querySelectorAll('.sidebar-link').forEach(link => {
                 link.classList.remove('active');
             });
-            document.getElementById('tab-' + tabId).classList.add('active');
+
+            const activeLink = document.getElementById('tab-' + tabId);
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
         }
 
-        // Login form submission
+
+        // Listener para el botón iniciar sesión del médico
         document.getElementById('medicoForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const email = document.getElementById('medicoEmail').value;
@@ -2324,24 +2562,13 @@
                 setTimeout(function () {
                     hideLoading();
 
-                    // Set user info based on login
-                    let medico = medicosBD[email] || {
-                        nombre: 'Dr. Usuario Médico',
-                        especialidad: 'Medicina General',
-                        iniciales: 'UM'
-                    };
-
-                    document.getElementById('nombreMedico').textContent = medico.nombre;
-                    document.getElementById('especialidadMedico').textContent = medico.especialidad;
-                    document.getElementById('inicialesMedico').textContent = medico.iniciales;
-
                     // Switch to portal view
                     switchView('portalMedicoView');
                 }, 1500);
             }
         });
 
-        // Coordinador form submission (solo para demo)
+        // Listener para el botón iniciar sesión del médico
         document.getElementById('coordinadorForm').addEventListener('submit', function (e) {
             e.preventDefault();
             const email = document.getElementById('coordinadorEmail').value;
@@ -2350,9 +2577,11 @@
             if (email && password) {
                 showLoading();
 
+                // Simulate API call delay
                 setTimeout(function () {
                     hideLoading();
                     switchView('portalCoordinadorView'); // Cambia a la vista del coordinador
+                    switchTab('medicos')
                 }, 1500);
             }
         });
@@ -2737,24 +2966,575 @@
 
         // Mostrar/Ocultar menú hamburguesa
         document.addEventListener('DOMContentLoaded', () => {
-            const toggleButton = document.getElementById('btnToggleSidebar');
-            const sidebar = document.getElementById('sidebarCoordinador');
-            const header = document.getElementById('headerCoordinador');
+            const toggleButtonCoordinador = document.getElementById('btnToggleSidebarCoordinador');
+            const sidebarCoordinador = document.getElementById('sidebarCoordinador');
+            const headerCoordinador = document.getElementById('headerCoordinador');
+            const toggleButtonMedico = document.getElementById('btnToggleSidebarMedico');
+            const sidebarMedico = document.getElementById('sidebarMedico');
+            const headerMedico = document.getElementById('headerMedico');
 
-            toggleButton.addEventListener('click', (e) => {
+            toggleButtonCoordinador.addEventListener('click', (e) => {
                 e.stopPropagation();
-                sidebar.classList.toggle('sidebar-visible');
-                header.classList.toggle('pl-72');
+                sidebarCoordinador.classList.toggle('sidebar-visible');
+                headerCoordinador.classList.toggle('pl-72');
+
+            });
+
+            toggleButtonMedico.addEventListener('click', (e) => {
+                e.stopPropagation();
+                sidebarMedico.classList.toggle('sidebar-visible');
+                headerMedico.classList.toggle('pl-72');
 
             });
 
             document.addEventListener('click', (e) => {
-                if (!sidebar.contains(e.target) && !toggleButton.contains(e.target)) {
-                    sidebar.classList.remove('sidebar-visible');
-                    header.classList.remove('pl-72');
+                if (!sidebarCoordinador.contains(e.target) && !toggleButtonCoordinador.contains(e.target)) {
+                    sidebarCoordinador.classList.remove('sidebar-visible');
+                    headerCoordinador.classList.remove('pl-72');
 
                 }
             });
+
+            document.addEventListener('click', (e) => {
+                if (!sidebarMedico.contains(e.target) && !toggleButtonMedico.contains(e.target)) {
+                    sidebarMedico.classList.remove('sidebar-visible');
+                    headerMedico.classList.remove('pl-72');
+
+                }
+            });
+        });
+
+        // Modal para agregar/editar boxes
+        const modalBox = document.getElementById('modalBox');
+        const formBox = document.getElementById('formBox');
+        const tablaBoxesBody = document.getElementById('tablaBoxesBody');
+        const btnAbrirModalBox = document.getElementById('btnAbrirModalBox');
+        const btnCancelarModalBox = document.getElementById('btnCancelarModalBox');
+        const modalTituloBox = document.getElementById('modalTituloBox');
+        const btnGuardarBox = document.getElementById('btnGuardarBox');
+
+        let editandoBox = null;
+
+        // Abrir modal en modo creación
+        btnAbrirModalBox.addEventListener('click', () => {
+            formBox.reset();
+            modalTituloBox.textContent = 'Crear Box';
+            btnGuardarBox.textContent = 'Crear';
+            editandoBox = null;
+            modalBox.classList.remove('hidden');
+        });
+
+        // Cancelar y cerrar modal
+        btnCancelarModalBox.addEventListener('click', () => {
+            modalBox.classList.add('hidden');
+        });
+
+        // Función para obtener el color del estado
+        function getEstadoBadge(estado) {
+            const clases = {
+                libre: 'bg-green-100 text-green-800',
+                asignado: 'bg-blue-100 text-blue-800',
+                ocupado: 'bg-yellow-100 text-yellow-800',
+                mantención: 'bg-red-100 text-red-800'
+            };
+            return `<span class="estado px-2 py-1 text-xs rounded-full font-medium ${clases[estado] || 'bg-gray-100 text-gray-800'}">${estado}</span>`;
+        }
+
+        function getEstadoBadgeClass(estado) {
+            const clases = {
+                libre: 'bg-green-100 text-green-800',
+                asignado: 'bg-blue-100 text-blue-800',
+                ocupado: 'bg-yellow-100 text-yellow-800',
+                mantención: 'bg-red-100 text-red-800'
+            };
+            return clases[estado] || 'bg-gray-100 text-gray-800';
+        }
+
+
+        // Guardar o editar box
+        formBox.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nombreBoxInput').value;
+            const piso = document.getElementById('pisoBoxInput').value;
+            const tipo = document.getElementById('tipoBoxInput').value;
+            const estado = document.getElementById('estadoBoxInput').value;
+
+            if (editandoBox) {
+                editandoBox.querySelector('.nombre').textContent = nombre;
+                editandoBox.querySelector('.piso').textContent = piso;
+                editandoBox.querySelector('.tipo').textContent = tipo;
+
+                const estadoSpan = editandoBox.querySelector('.estado');
+                estadoSpan.textContent = estado;
+                estadoSpan.className = `estado px-2 py-1 text-xs rounded-full font-medium ${getEstadoBadgeClass(estado)}`;
+            } else {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 nombre">${nombre}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 piso">${piso}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 tipo">${tipo}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm">${getEstadoBadge(estado)}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm">
+        <button class="text-blue-600 hover:underline mr-2 btn-editar-box">Editar</button>
+        <button class="text-red-600 hover:underline btn-eliminar-box">Eliminar</button>
+      </td>
+    `;
+                tablaBoxesBody.appendChild(fila);
+            }
+
+            modalBox.classList.add('hidden');
+        });
+
+
+
+        // Delegación de eventos para editar y eliminar
+        tablaBoxesBody.addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-eliminar-box')) {
+                const confirmar = confirm('¿Estás seguro de que deseas eliminar este box?');
+                if (confirmar) {
+                    e.target.closest('tr').remove();
+                }
+            } else if (e.target.classList.contains('btn-editar-box')) {
+                editandoBox = e.target.closest('tr');
+                document.getElementById('nombreBoxInput').value = editandoBox.querySelector('.nombre').textContent;
+                document.getElementById('pisoBoxInput').value = editandoBox.querySelector('.piso').textContent;
+                document.getElementById('tipoBoxInput').value = editandoBox.querySelector('.tipo').textContent;
+                document.getElementById('estadoBoxInput').value = editandoBox.querySelector('.estado').textContent;
+                modalTituloBox.textContent = 'Editar Box';
+                btnGuardarBox.textContent = 'Editar';
+                modalBox.classList.remove('hidden');
+            }
+        });
+
+        // Datos auxiliares para pruebas de paginación (Aqui debemos poner el ResultSet o lista de todos los boxes desde la BDD)
+        const boxesDemo = [ // SELECT * FROM Boxes;
+            { nombre: 'Box 101', piso: '4', tipo: 'consulta', estado: 'libre' },
+            { nombre: 'Box 102', piso: '4', tipo: 'consulta', estado: 'asignado' },
+            { nombre: 'Box 103', piso: '5', tipo: 'is', estado: 'ocupado' },
+            { nombre: 'Box 104', piso: '5', tipo: 'vacunatorio', estado: 'mantención' },
+            { nombre: 'Box 105', piso: '6', tipo: 'consulta', estado: 'libre' },
+            { nombre: 'Box 106', piso: '6', tipo: 'oficina', estado: 'asignado' },
+            { nombre: 'Box 107', piso: '7', tipo: 'otro', estado: 'ocupado' },
+            { nombre: 'Box 108', piso: '8', tipo: 'consulta', estado: 'libre' },
+            { nombre: 'Box 109', piso: '9', tipo: 'consulta', estado: 'mantención' }
+        ];
+
+        // Datos auxiliares para pruebas de paginación (Aqui debemos poner el ResultSet o lista de todos los boxes desde la BDD)
+        const medicosDemo = [ // SELECT * FROM medicos;
+            { nombre: 'Dr. Juan Pérez', especialidad: 'Cardiología', correo: 'juan.perez@redsalud.cl' },
+            { nombre: 'Dra. María Gómez', especialidad: 'Pediatría', correo: 'maria.gomez@redsalud.cl' },
+            { nombre: 'Dr. Luis Torres', especialidad: 'Traumatología', correo: 'luis.torres@redsalud.cl' },
+            { nombre: 'Dra. Ana Rojas', especialidad: 'Medicina General', correo: 'ana.rojas@redsalud.cl' },
+            { nombre: 'Dr. Pedro Díaz', especialidad: 'Cardiología', correo: 'pedro.diaz@redsalud.cl' },
+            { nombre: 'Dra. Carla Fuentes', especialidad: 'Pediatría', correo: 'carla.fuentes@redsalud.cl' },
+            { nombre: 'Dr. Tomás Silva', especialidad: 'Traumatología', correo: 'tomas.silva@redsalud.cl' },
+            { nombre: 'Dra. Laura Herrera', especialidad: 'Medicina General', correo: 'laura.herrera@redsalud.cl' },
+            { nombre: 'Dr. Andrés Castro', especialidad: 'Cardiología', correo: 'andres.castro@redsalud.cl' }
+        ];
+
+        // Filtros para la tabla de Boxes
+        function aplicarFiltrosBoxes() {
+            const nombreFiltro = document.getElementById('filtroNombreBox').value.toLowerCase();
+            const estadoFiltro = document.getElementById('filtroEstadoBox').value;
+
+            const filtrados = boxesDemo.filter(box => {
+                const coincideNombre = box.nombre.toLowerCase().includes(nombreFiltro);
+                const coincideEstado = !estadoFiltro || box.estado === estadoFiltro;
+                return coincideNombre && coincideEstado;
+            });
+
+            // Reiniciar paginación y renderizar
+            currentPage = 1;
+            renderBoxesTable(filtrados);
+        }
+
+
+        // Paginación de la tabla de Boxes
+        let currentPage = 1;
+        const boxesPerPage = 8;
+
+        function renderBoxesTable(lista = boxesDemo) {
+            tablaBoxesBody.innerHTML = '';
+            const start = (currentPage - 1) * boxesPerPage;
+            const end = start + boxesPerPage;
+            const boxesToShow = lista.slice(start, end);
+
+            boxesToShow.forEach(box => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 nombre">${box.nombre}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 piso">${box.piso}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 tipo">${box.tipo}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm">${getEstadoBadge(box.estado)}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm">
+        <button class="text-blue-600 hover:underline mr-2 btn-editar-box">Editar</button>
+        <button class="text-red-600 hover:underline btn-eliminar-box">Eliminar</button>
+      </td>
+    `;
+                tablaBoxesBody.appendChild(fila);
+            });
+
+            renderPaginationControls(lista);
+        }
+
+
+        function renderPaginationControls(lista = boxesDemo) {
+            const totalPages = Math.ceil(lista.length / boxesPerPage);
+            const container = document.getElementById('paginacionBoxes');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `px-3 py-1 border rounded-md text-sm mx-1 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`;
+                btn.addEventListener('click', () => {
+                    currentPage = i;
+                    renderBoxesTable(lista);
+                });
+                container.appendChild(btn);
+            }
+        }
+
+        // Paginación de la tabla de Médicos
+        let currentPageMedicos = 1;
+        const medicosPerPage = 5;
+
+        function renderMedicosTable(lista = medicosDemo) {
+            const tablaBody = document.getElementById('tablaMedicosBody');
+            tablaBody.innerHTML = '';
+            const start = (currentPageMedicos - 1) * medicosPerPage;
+            const end = start + medicosPerPage;
+            const medicosToShow = lista.slice(start, end);
+
+            medicosToShow.forEach(medico => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 nombre">${medico.nombre}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 especialidad">${medico.especialidad}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 correo">${medico.correo}</td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm">
+        <button class="text-blue-600 hover:underline mr-2 btn-editar">Editar</button>
+        <button class="text-red-600 hover:underline btn-eliminar">Eliminar</button>
+      </td>
+    `;
+                tablaBody.appendChild(fila);
+            });
+
+            renderPaginationControlsMedicos(lista);
+        }
+
+        function renderPaginationControlsMedicos(lista = medicosDemo) {
+            const totalPages = Math.ceil(lista.length / medicosPerPage);
+            const container = document.getElementById('paginacionMedicos');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = `px-3 py-1 border rounded-md text-sm mx-1 ${i === currentPageMedicos ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`;
+                btn.addEventListener('click', () => {
+                    currentPageMedicos = i;
+                    renderMedicosTable(lista);
+                });
+                container.appendChild(btn);
+            }
+        }
+
+
+        // Inicializar tabla de boxes al cargar
+        document.addEventListener('DOMContentLoaded', renderBoxesTable(boxesDemo));
+
+        // Inicializar tabla de médicos al cargar
+
+        document.addEventListener('DOMContentLoaded', renderMedicosTable(medicosDemo));
+
+        // Listener del botón para aplicar filtros de la tabla de Boxes
+        document.getElementById('btnAplicarFiltrosBoxes').addEventListener('click', aplicarFiltrosBoxes);
+
+        // Listener del botón para limpiar filtros de la tabla de Boxes
+        document.getElementById('btnLimpiarFiltrosBoxes').addEventListener('click', () => {
+            document.getElementById('filtroNombreBox').value = '';
+            document.getElementById('filtroEstadoBox').value = '';
+            currentPage = 1;
+            renderBoxesTable(); // vuelve a mostrar todos
+        });
+
+        // Listener del botón para limpiar filtros de la tabla de Médicos
+        document.getElementById('btnLimpiarFiltrosMedicos').addEventListener('click', () => {
+            document.getElementById('filtroNombre').value = '';
+            document.getElementById('filtroEspecialidad').value = '';
+            renderMedicosTable(); // vuelve a mostrar todos
+        });
+
+        // Función para transformar los datos que entran de la base de datos para poder usar la función propuesta
+        function transformarAsignaciones(filasSQL) {
+            const resultado = {};
+
+            filasSQL.forEach(fila => {
+                const box = fila.nombre_box;
+                const dia = new Date(fila.fecha).toLocaleDateString('es-CL', { weekday: 'long' });
+                const hora = fila.hora_inicio.slice(0, 5); // "08:15"
+
+                if (!resultado[box]) resultado[box] = {};
+                if (!resultado[box][dia]) resultado[box][dia] = {};
+
+                resultado[box][dia][hora] = {
+                    medico: fila.medico,
+                    especialidad: fila.especialidad
+                };
+            });
+
+            return resultado;
+        }
+        /*
+  -- Consulta SQL sugerida para alimentar la vista de asignaciones:
+
+  SELECT
+    b.nombre_box,
+    o.fecha,
+    o.hora_inicio,
+    o.hora_fin,
+    m.nombre AS medico,
+    m.especialidad,
+    b.estado
+  FROM Asignaciones a
+  JOIN Boxes b ON a.id_box = b.id_box
+  JOIN Ofertas o ON a.id_oferta = o.id_oferta
+  JOIN Medicos m ON o.id_medico = m.id_medico
+  WHERE b.nombre_box = 'Box 101'
+    AND WEEK(o.fecha) = WEEK(CURDATE())
+    AND YEAR(o.fecha) = YEAR(CURDATE());
+
+  -- Esta consulta devuelve las asignaciones de la semana actual para un box específico.
+*/
+        // Lista de horarios para los boxes    
+        const horarios = [
+            "08:15", "08:40", "09:00", "09:20", "09:40", "10:00", "10:20", "10:40",
+            "11:00", "11:20", "11:40", "12:00", "12:20", "12:40", "13:00", "13:20",
+            "13:40", "14:00", "14:20", "14:40", "15:00", "15:20", "15:40", "16:00",
+            "16:20", "16:40", "17:00", "17:20", "17:40", "18:00", "18:20", "18:40",
+            "19:00", "19:20", "19:40", "20:00"
+        ];
+
+        // Lista de dias para los boxes        
+        const dias = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+
+
+        // Datos de demostración para asignaciones
+        const asignacionesDemo = {
+            "Box 101": {
+                "Lunes": {
+                    "08:15": { medico: "Dr. Juan Pérez", especialidad: "Cardiología" },
+                    "09:00": { medico: "Dr. Juan Pérez", especialidad: "Cardiología" }
+                },
+                "Martes": {
+                    "10:00": { medico: "Dra. María Gómez", especialidad: "Pediatría" }
+                },
+                "Miércoles": {},
+                "Jueves": {
+                    "14:00": { medico: "Dr. Luis Torres", especialidad: "Traumatología" }
+                },
+                "Viernes": {},
+                "Sábado": {}
+            },
+            "Box 102": {
+                "Lunes": {},
+                "Martes": {},
+                "Miércoles": {
+                    "08:15": { estado: "mantención" }
+                },
+                "Jueves": {},
+                "Viernes": {
+                    "11:00": { estado: "ocupado" }
+                },
+                "Sábado": {}
+            }
+        };
+
+
+        function buscarBoxes() {
+            const nombre = document.getElementById("buscarNombreBox").value.toLowerCase();
+            const piso = document.getElementById("buscarPisoBox").value;
+            const estado = document.getElementById("buscarEstadoBox").value;
+
+            const resultados = boxesDemo.filter(box => {
+                const coincideNombre = box.nombre.toLowerCase().includes(nombre);
+                const coincidePiso = !piso || box.piso === piso;
+                const coincideEstado = !estado || box.estado === estado;
+                return coincideNombre && coincidePiso && coincideEstado;
+            });
+
+            const combo = document.getElementById("comboBoxSeleccionado");
+            combo.innerHTML = '<option value="">Seleccione un box</option>';
+            resultados.forEach(box => {
+                const option = document.createElement("option");
+                option.value = box.nombre;
+                option.textContent = `${box.nombre} - Piso ${box.piso} (${box.estado})`;
+                combo.appendChild(option);
+            });
+        }
+
+        function renderTablaAsignaciones() {
+            const box = document.getElementById("comboBoxSeleccionado")?.value;
+            if (!box || !asignacionesDemo[box]) return;
+
+            const cuerpo = document.getElementById("cuerpoAsignaciones");
+            cuerpo.innerHTML = "";
+
+            horarios.forEach(hora => {
+                const fila = document.createElement("tr");
+
+                // Columna de hora
+                const tdHora = document.createElement("td");
+                tdHora.className = "border px-2 py-1 font-medium bg-gray-50";
+                tdHora.textContent = hora;
+                fila.appendChild(tdHora);
+
+                dias.forEach(dia => {
+                    const asignacion = asignacionesDemo[box][dia]?.[hora];
+                    const celdaId = `${box}-${dia}-${hora}`;
+                    const estaSeleccionada = celdasSeleccionadas.includes(celdaId);
+
+                    let baseColor = "bg-white text-gray-700 hover:bg-green-100";
+                    let contenidoInterno = "Disponible";
+
+                    if (asignacion?.estado === "mantención") {
+                        baseColor = "bg-red-100 text-red-800";
+                        contenidoInterno = "Mantención";
+                    } else if (asignacion?.estado === "ocupado") {
+                        baseColor = "bg-yellow-100 text-yellow-800";
+                        contenidoInterno = "Ocupado";
+                    } else if (asignacion?.estado && asignacion?.estado !== "libre") {
+                        baseColor = "bg-gray-200 text-gray-800";
+                        contenidoInterno = asignacion.estado.charAt(0).toUpperCase() + asignacion.estado.slice(1);
+                    } else if (asignacion?.medico) {
+                        baseColor = "bg-blue-100 text-blue-800";
+                        contenidoInterno = `${asignacion.medico}<br><span class='text-xs'>${asignacion.especialidad}</span>`;
+                    }
+
+                    const claseSeleccion = estaSeleccionada ? "celda-seleccionada" : "";
+
+                    const td = document.createElement("td");
+                    td.className = "border px-2 py-1";
+
+                    const div = document.createElement("div");
+                    div.className = `rounded px-1 py-1 cursor-pointer transition duration-150 ease-in-out ${baseColor} ${claseSeleccion}`;
+                    div.innerHTML = contenidoInterno;
+                    div.setAttribute("data-id", celdaId);
+
+                    td.appendChild(div);
+                    fila.appendChild(td);
+                });
+
+                cuerpo.appendChild(fila);
+            });
+        }
+
+
+        function abrirModalAsignacion(box, dia, hora) {
+            const modal = document.getElementById("modalAsignacion");
+            const info = document.getElementById("infoAsignacion");
+            const titulo = modal.querySelector("h3");
+            const btnEliminar = document.getElementById("btnEliminarAsignacion");
+
+            modal.dataset.box = box;
+            modal.dataset.dia = dia;
+            modal.dataset.hora = hora;
+
+            const seleccionadas = celdasSeleccionadas.length > 1 ? celdasSeleccionadas : [`${box}-${dia}-${hora}`];
+
+            const esMultiple = seleccionadas.length > 1;
+            const texto = esMultiple
+                ? `Asignar oferta a ${seleccionadas.length} casillas seleccionadas`
+                : asignacionesDemo[box]?.[dia]?.[hora]?.medico || asignacionesDemo[box]?.[dia]?.[hora]?.estado
+                    ? `Editar oferta para ${box}, ${dia} a las ${hora}`
+                    : `Asignar oferta para ${box}, ${dia} a las ${hora}`;
+
+            titulo.textContent = esMultiple ? "Asignar múltiples ofertas" : (texto.startsWith("Editar") ? "Editar oferta" : "Asignar oferta");
+            info.textContent = texto;
+
+            btnEliminar.classList.toggle("hidden", esMultiple || !asignacionesDemo[box]?.[dia]?.[hora]);
+
+            modal.classList.remove("hidden");
+        }
+
+
+
+        function eliminarAsignacion() {
+            const confirmar = confirm("¿Estás seguro de que deseas eliminar esta asignación?");
+            if (!confirmar) return;
+
+            const modal = document.getElementById("modalAsignacion");
+            const { box, dia, hora } = modal.dataset;
+
+            if (asignacionesDemo[box] && asignacionesDemo[box][dia]) {
+                delete asignacionesDemo[box][dia][hora];
+            }
+
+            cerrarModalAsignacion();
+            renderTablaAsignaciones();
+        }
+
+        function cerrarModalAsignacion() {
+            document.getElementById("modalAsignacion").classList.add("hidden");
+        }
+
+        document.getElementById("formAsignacion").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const oferta = document.getElementById("ofertaDisponible").value;
+            if (!oferta) {
+                alert("Debe seleccionar una oferta");
+                return;
+            }
+
+            const modal = document.getElementById("modalAsignacion");
+            const box = modal.dataset.box;
+            const dia = modal.dataset.dia;
+            const hora = modal.dataset.hora;
+
+            alert(`Oferta ${oferta} asignada a ${box}, ${dia} a las ${hora}`);
+            cerrarModalAsignacion();
+
+            // Aquí podrías actualizar asignacionesDemo o enviar al backend
+        });
+
+        document.getElementById("cuerpoAsignaciones").addEventListener("click", function (e) {
+            const target = e.target.closest("div[data-id]");
+            if (!target) return;
+
+            const celdaId = target.getAttribute("data-id");
+
+            if (e.ctrlKey) {
+                const index = celdasSeleccionadas.indexOf(celdaId);
+                if (index > -1) {
+                    celdasSeleccionadas.splice(index, 1);
+                } else {
+                    celdasSeleccionadas.push(celdaId);
+                }
+                renderTablaAsignaciones();
+            } else {
+                celdasSeleccionadas = [];
+                const [box, dia, hora] = celdaId.split("-");
+                abrirModalAsignacion(box, dia, hora);
+            }
+        });
+
+
+        document.addEventListener("keyup", function (e) {
+            if (e.key === "Control" && celdasSeleccionadas.length > 0) {
+                const [primera] = celdasSeleccionadas[0].split("-");
+                const [box, dia, hora] = celdasSeleccionadas[0].split("-");
+                abrirModalAsignacion(box, dia, hora);
+            }
+        });
+
+
+        document.addEventListener("click", function (e) {
+            const tabla = document.getElementById("tablaAsignaciones");
+            if (!tabla.contains(e.target)) {
+                celdasSeleccionadas = [];
+                renderTablaAsignaciones();
+            }
         });
 
     </script>
