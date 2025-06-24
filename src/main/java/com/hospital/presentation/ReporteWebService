@@ -1,0 +1,40 @@
+package com.hospital.presentation;
+
+import com.hospital.business.ReporteService;
+import com.hospital.entities.AsignacionDetallada;
+
+import javax.jws.WebMethod;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.Style;
+import java.util.List;
+import java.util.Map;
+
+@WebService
+@SOAPBinding(style = Style.DOCUMENT)
+public class ReporteWebService {
+    
+    private ReporteService reporteService;
+    
+    public ReporteWebService() {
+        this.reporteService = new ReporteService();
+    }
+    
+    @WebMethod
+    public Map<String, Integer> generarReporteOcupacionBoxes() {
+        try {
+            return reporteService.generarReporteOcupacionBoxes();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    @WebMethod
+    public List<AsignacionDetallada> generarReporteAsignaciones() {
+        try {
+            return reporteService.generarReporteAsignaciones();
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+}

@@ -1,0 +1,31 @@
+package com.hospital.business;
+
+import com.hospital.data.AsignacionDAO;
+import com.hospital.entities.AsignacionDetallada;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
+public class ReporteService {
+    private AsignacionDAO asignacionDAO;
+    
+    public ReporteService() {
+        this.asignacionDAO = new AsignacionDAO();
+    }
+    
+    public Map<String, Integer> generarReporteOcupacionBoxes() throws Exception {
+        try {
+            return asignacionDAO.obtenerReporteOcupacionBoxes();
+        } catch (SQLException e) {
+            throw new Exception("Error al generar reporte de ocupación: " + e.getMessage(), e);
+        }
+    }
+    
+    public List<AsignacionDetallada> generarReporteAsignaciones() throws Exception {
+        try {
+            return asignacionDAO.obtenerTodasLasAsignaciones();
+        } catch (SQLException e) {
+            throw new Exception("Error al generar reporte de asignaciones: " + e.getMessage(), e);
+        }
+    }
+}

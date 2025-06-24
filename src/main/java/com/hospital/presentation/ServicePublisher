@@ -1,0 +1,22 @@
+package com.hospital.presentation;
+
+import javax.xml.ws.Endpoint;
+
+public class ServicePublisher {
+    public static void main(String[] args) {
+        String medicoServiceUrl = "http://localhost:8080/ws/medico";
+        String boxServiceUrl = "http://localhost:8080/ws/box";
+        String reporteServiceUrl = "http://localhost:8080/ws/reporte";
+        
+        // Publicar servicios web
+        Endpoint.publish(medicoServiceUrl, new MedicoWebService());
+        Endpoint.publish(boxServiceUrl, new BoxWebService());
+        Endpoint.publish(reporteServiceUrl, new ReporteWebService());
+        
+        System.out.println("Servicios Web publicados exitosamente:");
+        System.out.println("- Médicos: " + medicoServiceUrl + "?wsdl");
+        System.out.println("- Boxes: " + boxServiceUrl + "?wsdl");
+        System.out.println("- Reportes: " + reporteServiceUrl + "?wsdl");
+        System.out.println("Presiona Ctrl+C para detener los servicios...");
+    }
+}

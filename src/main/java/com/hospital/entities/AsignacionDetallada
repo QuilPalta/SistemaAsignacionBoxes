@@ -1,0 +1,55 @@
+package com.hospital.entities;
+
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+public class AsignacionDetallada implements Serializable {
+    private int id;
+    private int boxId;
+    private String boxTipo;
+    private String medicoRut;
+    private String medicoNombre;
+    private String especialidad;
+    private Timestamp horaInicio;
+    private Timestamp horaFin;
+    
+    public AsignacionDetallada() {}
+    
+    public AsignacionDetallada(int id, int boxId, String boxTipo, String medicoRut, 
+                              String medicoNombre, String especialidad, 
+                              Timestamp horaInicio, Timestamp horaFin) {
+        this.id = id;
+        this.boxId = boxId;
+        this.boxTipo = boxTipo;
+        this.medicoRut = medicoRut;
+        this.medicoNombre = medicoNombre;
+        this.especialidad = especialidad;
+        this.horaInicio = horaInicio;
+        this.horaFin = horaFin;
+    }
+    
+    // Getters y Setters (implementar todos)
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+    
+    public int getBoxId() { return boxId; }
+    public void setBoxId(int boxId) { this.boxId = boxId; }
+    
+    public String getBoxTipo() { return boxTipo; }
+    public void setBoxTipo(String boxTipo) { this.boxTipo = boxTipo; }
+    
+    public String getMedicoRut() { return medicoRut; }
+    public void setMedicoRut(String medicoRut) { this.medicoRut = medicoRut; }
+    
+    public String getMedicoNombre() { return medicoNombre; }
+    public void setMedicoNombre(String medicoNombre) { this.medicoNombre = medicoNombre; }
+    
+    public String getEspecialidad() { return especialidad; }
+    public void setEspecialidad(String especialidad) { this.especialidad = especialidad; }
+    
+    public Timestamp getHoraInicio() { return horaInicio; }
+    public void setHoraInicio(Timestamp horaInicio) { this.horaInicio = horaInicio; }
+    
+    public Timestamp getHoraFin() { return horaFin; }
+    public void setHoraFin(Timestamp horaFin) { this.horaFin = horaFin; }
+}

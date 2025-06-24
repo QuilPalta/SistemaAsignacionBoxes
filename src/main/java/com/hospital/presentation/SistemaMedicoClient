@@ -1,0 +1,103 @@
+package com.hospital.presentation;
+
+import com.hospital.entities.Medico;
+import com.hospital.entities.Asignacion;
+import com.hospital.entities.Box;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
+import java.net.URL;
+import java.sql.Timestamp;
+import java.util.List;
+
+public class SistemaMedicoClient {
+    public static void main(String[] args) {
+        try {
+            // Configurar URLs de los servicios
+            URL medicoWsdlUrl = new URL("http://localhost:8080/ws/medico?wsdl");
+            URL boxWsdlUrl = new URL("http://localhost:8080/ws/box?wsdl");
+            URL reporteWsdlUrl = new URL("http://localhost:8080/ws/reporte?wsdl");
+            
+            // Crear servicios
+            QName medicoServiceName = new QName("http://presentation.hospital.com/", "MedicoWebService");
+            QName boxServiceName = new QName("http://presentation.hospital.com/", "BoxWebService");
+            QName reporteServiceName = new QName("http://presentation.hospital.com/", "ReporteWebService");
+            
+            Service medicoService = Service.create(medicoWsdlUrl, medicoServiceName);
+            Service boxService = Service.create(boxWsdlUrl, boxServiceName);
+            Service reporteService = Service.create(reporteWsdlUrl, reporteServiceName);
+            
+            // Obtener ports
+            MedicoWebService medicoPort = medicoService.getPort(MedicoWebService.class);
+            BoxWebService boxPort = boxService.getPort(BoxWebService.class);
+            ReporteWebService reportePort = reporteService.getPort(ReporteWebService.class);
+            
+            // Ejemplos de uso
+            System.out.println("=== DEMO DEL SISTEMA DE ASIGNACIÓN DE BOXES ===\n");
+            
+            // Ejemplo 1: Agregar un médico
+            System.out.println("1. Agregando médico...");
+            String resultado = medicoPort.agregarMedico("12345678-9", "Dr. Juan Pérez", "Cardiología");
+            System.out.println("Resultado: " + resultado + "\n");
+            
+            // Ejemplo 2: Buscar médicos por especialidad
+            System.out.println("2. Buscando cardiólogos disponibles:");
+            List<Medico> cardiologos = medicoPort.buscarMedicosPorEspecialidad("Cardiología");
+            for (Medico medico : cardiologos) {
+                System.out.println("- " + medico.getNombre() + " (" + medico.getRut() + ") - Estado: " + medico.getEstado());
+            }
+            System.out.println();
+            
+            // Ejemplo 3: Filtrar boxes disponibles
+            System.out.println("3. Boxes disponibles:");
+            List<Box> boxesDisponibles = boxPort.filtrarBoxesPorEstado(0);
+            for (Box box : boxesDisponibles) {
+                System.out.println("- Box " + box.getId() + " - Tipo: " + box.getTipo() + " - Estado: " + box.getEstado());
+            }
+            System.out.println();
+            
+            // Ejemplo 4: Asignar médico a box (si hay datos disponibles)
+            if (!cardiologos.isEmpty() && !boxesDisponibles.isEmpty()) {
+                System.out.println("4. Asignando médico a box...");
+                String rutMedico = cardiologos.get(0).getRut();
+                int boxId = boxesDisponibles.get(0).getId();
+                
+                Timestamp ahora = new Timestamp(System.currentTimeMillis());
+                Timestamp fin = new Timestamp(ahora.getTime() + 3600000); // 1 hora después
+                
+                String resultadoAsignacion = boxPort.asignarMedicoABox(boxId, rutMedico, ahora, fin);
+                System.out.println("Resultado de asignación: " + resultadoAsignacion + "\n");
+                
+                // Ejemplo 5: Ver horarios del médico
+                System.out.println("5. Horarios del médico " + rutMedico + ":");
+                List<Asignacion> horarios = medicoPort.obtenerHorariosMedico(rutMedico);
+                for (Asignacion asignacion : horarios) {
+                    System.out.println("- Box " + asignacion.getBoxId() + " - " + 
+                                     asignacion.getHoraInicio() + " a " + asignacion.getHoraFin());
+                }
+                System.out.println();
+            }
+            
+            // Ejemplo 6: Generar reporte de ocupación
+            System.out.println("6. Reporte de ocupación de boxes:");
+            var reporteOcupacion = reportePort.generarReporteOcupacionBoxes();
+            for (var entry : reporteOcupacion.entrySet()) {
+                System.out.println("- " + entry.getKey() + ": " + entry.getValue() + " boxes");
+            }
+            System.out.println();
+            
+            // Ejemplo 7: Reporte de asignaciones
+            System.out.println("7. Reporte de asignaciones activas:");
+            var asignaciones = reportePort.generarReporteAsignaciones();
+            for (var asignacion : asignaciones) {
+                System.out.println("- Box " + asignacion.getBoxId() + " (" + asignacion.getBoxTipo() + ") - " +
+                                 "Dr. " + asignacion.getMedicoNombre() + " (" + asignacion.getEspecialidad() + ") - " +
+                                 asignacion.getHoraInicio() + " a " + asignacion.getHoraFin());
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error en el cliente: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}

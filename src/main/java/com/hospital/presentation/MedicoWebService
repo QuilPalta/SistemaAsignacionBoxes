@@ -1,0 +1,66 @@
+package com.hospital.presentation;
+
+import com.hospital.business.MedicoService;
+import com.hospital.entities.Medico;
+import com.hospital.entities.Asignacion;
+
+import javax.jws.WebMethod;
+import javax.jws.WebParam;
+import javax.jws.WebService;
+import javax.jws.soap.SOAPBinding;
+import javax.jws.soap.SOAPBinding.Style;
+import java.util.List;
+
+@WebService
+@SOAPBinding(style = Style.DOCUMENT)
+public class MedicoWebService {
+    
+    private MedicoService medicoService;
+    
+    public MedicoWebService() {
+        this.medicoService = new MedicoService();
+    }
+    
+    @WebMethod
+    public List<Medico> buscarMedicosPorEspecialidad(
+            @WebParam(name = "especialidad") String especialidad) {
+        try {
+            return medicoService.buscarMedicosPorEspecialidad(especialidad);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    @WebMethod
+    public String agregarMedico(
+            @WebParam(name = "rut") String rut,
+            @WebParam(name = "nombre") String nombre,
+            @WebParam(name = "especialidad") String especialidad) {
+        try {
+            return medicoService.agregarMedico(rut, nombre, especialidad);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    @WebMethod
+    public String cambiarEstadoMedico(
+            @WebParam(name = "rut") String rut,
+            @WebParam(name = "estado") int estado) {
+        try {
+            return medicoService.cambiarEstadoMedico(rut, estado);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+    
+    @WebMethod
+    public List<Asignacion> obtenerHorariosMedico(
+            @WebParam(name = "rutMedico") String rutMedico) {
+        try {
+            return medicoService.obtenerHorariosMedico(rutMedico);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+}

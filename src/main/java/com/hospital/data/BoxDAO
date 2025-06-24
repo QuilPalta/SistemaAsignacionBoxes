@@ -1,0 +1,55 @@
+package com.hospital.data;
+
+import com.hospital.entities.Box;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class BoxDAO {
+    
+    public List<Box> filtrarPorEstado(int estado) throws SQLException {
+        List<Box> boxes = new ArrayList<>();
+        String sql = "SELECT b.ID, b.tipo, e.nombre as estado " +
+                     "FROM Boxes b JOIN Estados e ON b.estado = e.id " +
+                     "WHERE b.estado = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, estado);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                boxes.add(new Box(
+                    rs.getInt("ID"),
+                    rs.getString("tipo"),
+                    rs.getString("estado")
+                ));
+            }
+        }
+        return boxes;
+    }
+    
+    public boolean actualizarEstado(int boxId, int estado) throws SQLException {
+        String sql = "UPDATE Boxes SET estado = ? WHERE ID = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, estado);
+            pstmt.setInt(2, boxId);
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+    
+    public boolean existeYDisponible(int boxId) throws SQLException {
+        String sql = "SELECT estado FROM Boxes WHERE ID = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, boxId);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next() && rs.getInt("estado") == 0;
+        }
+    }
+}

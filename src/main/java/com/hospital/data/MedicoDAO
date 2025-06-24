@@ -1,0 +1,96 @@
+package com.hospital.data;
+
+import com.hospital.entities.Medico;
+import com.hospital.entities.Asignacion;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MedicoDAO {
+    
+    public List<Medico> buscarPorEspecialidad(String especialidad) throws SQLException {
+        List<Medico> medicos = new ArrayList<>();
+        String sql = "SELECT m.RUT, m.nombre, m.especialidad, e.nombre as estado " +
+                     "FROM Medicos m JOIN Estados e ON m.estado = e.id " +
+                     "WHERE m.especialidad = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, especialidad);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                medicos.add(new Medico(
+                    rs.getString("RUT"),
+                    rs.getString("nombre"),
+                    rs.getString("especialidad"),
+                    rs.getString("estado")
+                ));
+            }
+        }
+        return medicos;
+    }
+    
+    public void insertar(Medico medico) throws SQLException {
+        String sql = "INSERT INTO Medicos (RUT, nombre, especialidad, estado) VALUES (?, ?, ?, 0)";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, medico.getRut());
+            pstmt.setString(2, medico.getNombre());
+            pstmt.setString(3, medico.getEspecialidad());
+            pstmt.executeUpdate();
+        }
+    }
+    
+    public boolean actualizarEstado(String rut, int estado) throws SQLException {
+        String sql = "UPDATE Medicos SET estado = ? WHERE RUT = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, estado);
+            pstmt.setString(2, rut);
+            
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+    
+    public List<Asignacion> obtenerHorarios(String rutMedico) throws SQLException {
+        List<Asignacion> asignaciones = new ArrayList<>();
+        String sql = "SELECT a.id, b.ID as box_id, b.tipo, a.hora_inicio, a.hora_fin " +
+                     "FROM Asignaciones a JOIN Boxes b ON a.box_id = b.ID " +
+                     "WHERE a.medico_rut = ? ORDER BY a.hora_inicio";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, rutMedico);
+            ResultSet rs = pstmt.executeQuery();
+            
+            while (rs.next()) {
+                asignaciones.add(new Asignacion(
+                    rs.getInt("id"),
+                    rs.getInt("box_id"),
+                    rs.getString("tipo"),
+                    rs.getTimestamp("hora_inicio"),
+                    rs.getTimestamp("hora_fin")
+                ));
+            }
+        }
+        return asignaciones;
+    }
+    
+    public boolean existeYDisponible(String rut) throws SQLException {
+        String sql = "SELECT estado FROM Medicos WHERE RUT = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, rut);
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next() && rs.getInt("estado") == 0;
+        }
+    }
+}
