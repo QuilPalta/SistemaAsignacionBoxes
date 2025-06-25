@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-private xmlns="http://www.netbeans.org/ns/project-private/1">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
+        <group>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaNegocio/CoordinadorNegocio.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaNegocio/AsignacionNegocio.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/Medico.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/Coordinador.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaNegocio/MedicoNegocio.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaServicios/WebServiceBoxes.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaServicios/WebServiceMedicos.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaServicios/WebServiceAsignaciones.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaWeb/CORSFilter.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/Asignacion.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaServicios/WebServiceReglaOfertaRecurrente.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaServicios/WebServiceOfertas.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/Box.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaServicios/WebServiceCoordinador.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/web/index.html</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaNegocio/ReglaOfertaRecurrenteNegocio.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/ReglaOfertaRecurrente.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaConexion/ConexionMySQL.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/Oferta.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaNegocio/OfertaNegocio.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/src/java/CapaDTO/ListaMedicos.java</file>
+            <file>file:/C:/Users/cbas2/OneDrive/Documentos/NetBeansProjects/AsignacionBoxesWS/nbproject/build-impl.xml</file>
+        </group>
+    </open-files>
+</project-private>

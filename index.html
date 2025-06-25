@@ -2182,10 +2182,6 @@
                                     <select id="filtroEspecialidad"
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md">
                                         <option value="">Todas</option>
-                                        <option>Cardiología</option>
-                                        <option>Pediatría</option>
-                                        <option>Traumatología</option>
-                                        <option>Medicina General</option>
                                     </select>
                                 </div>
                             </div>
@@ -2372,6 +2368,26 @@
                             </select>
                         </div>
 
+                        <div class="flex justify-between items-center mb-6">
+                            <p class="text-gray-600">Guia de uso: Usa Ctrl + click izquierdo para seleccionar varias
+                                celdas
+                            </p>
+                        </div>
+                        <div class="flex justify-between items-center mb-6">
+                            <p class="text-gray-600">Usa click izquierdo sobre casillas seleccionadas para asignar las
+                                selecciones
+                            </p>
+                        </div>
+                        <div class="flex justify-between items-center mb-6">
+                            <p class="text-gray-600">Usa click izquierdo sobre casillas no seleccionadas para asignar
+                                una unica selección
+                            </p>
+                        </div>
+                        <div class="flex justify-between items-center mb-6">
+                            <p class="text-gray-600">Usa click izquierdo sobre casillas ocupadas para editar/eliminar la
+                                asignación
+                            </p>
+                        </div>
 
                         <table id="tablaAsignaciones"
                             class="min-w-full table-fixed border border-gray-200 text-sm text-center">
@@ -2505,7 +2521,14 @@
 
     <script>
 
+        // Ejecutar al cargar la página
+        document.addEventListener('DOMContentLoaded', cargarEspecialidadesDesdeWS);
+
+        // Inicializar tabla de médicos al cargar
+        document.addEventListener('DOMContentLoaded', cargarMedicosDesdeWS);
+
         let celdasSeleccionadas = [];
+        let listaMedicosCompleta = [];
 
         // Mostrar el loading
         function showLoading() {
@@ -2527,25 +2550,29 @@
 
         // Funcionalidad para cambiar entre tabs
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-                tab.classList.remove('active');
-            });
+            showLoading()
+            setTimeout(function () {
+                hideLoading()
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.add('hidden');
+                    tab.classList.remove('active');
+                });
 
-            const selected = document.getElementById('content-' + tabId);
-            if (selected) {
-                selected.classList.remove('hidden');
-                selected.classList.add('active');
-            }
+                const selected = document.getElementById('content-' + tabId);
+                if (selected) {
+                    selected.classList.remove('hidden');
+                    selected.classList.add('active');
+                }
 
-            document.querySelectorAll('.sidebar-link').forEach(link => {
-                link.classList.remove('active');
-            });
+                document.querySelectorAll('.sidebar-link').forEach(link => {
+                    link.classList.remove('active');
+                });
 
-            const activeLink = document.getElementById('tab-' + tabId);
-            if (activeLink) {
-                activeLink.classList.add('active');
-            }
+                const activeLink = document.getElementById('tab-' + tabId);
+                if (activeLink) {
+                    activeLink.classList.add('active');
+                }
+            }, 250);
         }
 
 
@@ -2564,6 +2591,7 @@
 
                     // Switch to portal view
                     switchView('portalMedicoView');
+                    switchTab('disponibilidad')
                 }, 1500);
             }
         });
@@ -3119,19 +3147,6 @@
             { nombre: 'Box 109', piso: '9', tipo: 'consulta', estado: 'mantención' }
         ];
 
-        // Datos auxiliares para pruebas de paginación (Aqui debemos poner el ResultSet o lista de todos los boxes desde la BDD)
-        const medicosDemo = [ // SELECT * FROM medicos;
-            { nombre: 'Dr. Juan Pérez', especialidad: 'Cardiología', correo: 'juan.perez@redsalud.cl' },
-            { nombre: 'Dra. María Gómez', especialidad: 'Pediatría', correo: 'maria.gomez@redsalud.cl' },
-            { nombre: 'Dr. Luis Torres', especialidad: 'Traumatología', correo: 'luis.torres@redsalud.cl' },
-            { nombre: 'Dra. Ana Rojas', especialidad: 'Medicina General', correo: 'ana.rojas@redsalud.cl' },
-            { nombre: 'Dr. Pedro Díaz', especialidad: 'Cardiología', correo: 'pedro.diaz@redsalud.cl' },
-            { nombre: 'Dra. Carla Fuentes', especialidad: 'Pediatría', correo: 'carla.fuentes@redsalud.cl' },
-            { nombre: 'Dr. Tomás Silva', especialidad: 'Traumatología', correo: 'tomas.silva@redsalud.cl' },
-            { nombre: 'Dra. Laura Herrera', especialidad: 'Medicina General', correo: 'laura.herrera@redsalud.cl' },
-            { nombre: 'Dr. Andrés Castro', especialidad: 'Cardiología', correo: 'andres.castro@redsalud.cl' }
-        ];
-
         // Filtros para la tabla de Boxes
         function aplicarFiltrosBoxes() {
             const nombreFiltro = document.getElementById('filtroNombreBox').value.toLowerCase();
@@ -3174,32 +3189,68 @@
                 tablaBoxesBody.appendChild(fila);
             });
 
-            renderPaginationControls(lista);
+            renderPaginationControls({
+                lista,
+                currentPage,
+                itemsPerPage: boxesPerPage,
+                containerId: 'paginacionBoxes',
+                onPageChange: (nuevaPagina) => {
+                    currentPage = nuevaPagina;
+                    renderBoxesTable(lista);
+                }
+            });
         }
 
-
-        function renderPaginationControls(lista = boxesDemo) {
-            const totalPages = Math.ceil(lista.length / boxesPerPage);
-            const container = document.getElementById('paginacionBoxes');
+        function renderPaginationControls({ lista, currentPage, onPageChange, containerId, itemsPerPage }) {
+            const totalPages = Math.ceil(lista.length / itemsPerPage);
+            const container = document.getElementById(containerId);
             container.innerHTML = '';
 
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = `px-3 py-1 border rounded-md text-sm mx-1 ${i === currentPage ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`;
-                btn.addEventListener('click', () => {
-                    currentPage = i;
-                    renderBoxesTable(lista);
-                });
-                container.appendChild(btn);
+            if (currentPage > 1) {
+                const firstBtn = document.createElement('button');
+                firstBtn.textContent = '« Primera';
+                firstBtn.className = 'px-3 py-1 border rounded-md text-sm mx-1 bg-white text-gray-700';
+                firstBtn.addEventListener('click', () => onPageChange(1));
+                container.appendChild(firstBtn);
+            }
+
+            if (currentPage > 1) {
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = currentPage - 1;
+                prevBtn.className = 'px-3 py-1 border rounded-md text-sm mx-1 bg-white text-gray-700';
+                prevBtn.addEventListener('click', () => onPageChange(currentPage - 1));
+                container.appendChild(prevBtn);
+            }
+
+            const currentBtn = document.createElement('button');
+            currentBtn.textContent = currentPage;
+            currentBtn.className = 'px-3 py-1 border rounded-md text-sm mx-1 bg-blue-500 text-white';
+            container.appendChild(currentBtn);
+
+            if (currentPage < totalPages) {
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = currentPage + 1;
+                nextBtn.className = 'px-3 py-1 border rounded-md text-sm mx-1 bg-white text-gray-700';
+                nextBtn.addEventListener('click', () => onPageChange(currentPage + 1));
+                container.appendChild(nextBtn);
+            }
+
+            if (currentPage < totalPages) {
+                const lastBtn = document.createElement('button');
+                lastBtn.textContent = 'Última »';
+                lastBtn.className = 'px-3 py-1 border rounded-md text-sm mx-1 bg-white text-gray-700';
+                lastBtn.addEventListener('click', () => onPageChange(totalPages));
+                container.appendChild(lastBtn);
             }
         }
+
+
 
         // Paginación de la tabla de Médicos
         let currentPageMedicos = 1;
         const medicosPerPage = 5;
 
-        function renderMedicosTable(lista = medicosDemo) {
+        function renderMedicosTable(lista) {
             const tablaBody = document.getElementById('tablaMedicosBody');
             tablaBody.innerHTML = '';
             const start = (currentPageMedicos - 1) * medicosPerPage;
@@ -3220,33 +3271,22 @@
                 tablaBody.appendChild(fila);
             });
 
-            renderPaginationControlsMedicos(lista);
-        }
-
-        function renderPaginationControlsMedicos(lista = medicosDemo) {
-            const totalPages = Math.ceil(lista.length / medicosPerPage);
-            const container = document.getElementById('paginacionMedicos');
-            container.innerHTML = '';
-
-            for (let i = 1; i <= totalPages; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = `px-3 py-1 border rounded-md text-sm mx-1 ${i === currentPageMedicos ? 'bg-blue-500 text-white' : 'bg-white text-gray-700'}`;
-                btn.addEventListener('click', () => {
-                    currentPageMedicos = i;
+            renderPaginationControls({
+                lista,
+                currentPage: currentPageMedicos,
+                itemsPerPage: medicosPerPage,
+                containerId: 'paginacionMedicos',
+                onPageChange: (nuevaPagina) => {
+                    currentPageMedicos = nuevaPagina;
                     renderMedicosTable(lista);
-                });
-                container.appendChild(btn);
-            }
+                }
+            });
         }
+
 
 
         // Inicializar tabla de boxes al cargar
         document.addEventListener('DOMContentLoaded', renderBoxesTable(boxesDemo));
-
-        // Inicializar tabla de médicos al cargar
-
-        document.addEventListener('DOMContentLoaded', renderMedicosTable(medicosDemo));
 
         // Listener del botón para aplicar filtros de la tabla de Boxes
         document.getElementById('btnAplicarFiltrosBoxes').addEventListener('click', aplicarFiltrosBoxes);
@@ -3364,6 +3404,12 @@
                 return coincideNombre && coincidePiso && coincideEstado;
             });
 
+            if (resultados.length >= 0) {
+                alert("Se encontraron resultados.");
+            } else {
+                alert("No se encontraron resultados");
+            }
+
             const combo = document.getElementById("comboBoxSeleccionado");
             combo.innerHTML = '<option value="">Seleccione un box</option>';
             resultados.forEach(box => {
@@ -3430,7 +3476,6 @@
             });
         }
 
-
         function abrirModalAsignacion(box, dia, hora) {
             const modal = document.getElementById("modalAsignacion");
             const info = document.getElementById("infoAsignacion");
@@ -3441,23 +3486,30 @@
             modal.dataset.dia = dia;
             modal.dataset.hora = hora;
 
-            const seleccionadas = celdasSeleccionadas.length > 1 ? celdasSeleccionadas : [`${box}-${dia}-${hora}`];
+            const celdaId = `${box}-${dia}-${hora}`;
+            const asignacion = asignacionesDemo[box]?.[dia]?.[hora];
+            const yaSeleccionada = celdasSeleccionadas.includes(celdaId);
 
-            const esMultiple = seleccionadas.length > 1;
+            // Solo se considera múltiple si la celda está seleccionada y hay más de una seleccionada
+            const esMultiple = yaSeleccionada && celdasSeleccionadas.length > 1;
+            const seleccionadas = esMultiple ? celdasSeleccionadas : [celdaId];
+
             const texto = esMultiple
                 ? `Asignar oferta a ${seleccionadas.length} casillas seleccionadas`
-                : asignacionesDemo[box]?.[dia]?.[hora]?.medico || asignacionesDemo[box]?.[dia]?.[hora]?.estado
+                : asignacion?.medico || asignacion?.estado
                     ? `Editar oferta para ${box}, ${dia} a las ${hora}`
                     : `Asignar oferta para ${box}, ${dia} a las ${hora}`;
 
-            titulo.textContent = esMultiple ? "Asignar múltiples ofertas" : (texto.startsWith("Editar") ? "Editar oferta" : "Asignar oferta");
+            titulo.textContent = esMultiple
+                ? "Asignar múltiples ofertas"
+                : (texto.startsWith("Editar") ? "Editar oferta" : "Asignar oferta");
+
             info.textContent = texto;
 
-            btnEliminar.classList.toggle("hidden", esMultiple || !asignacionesDemo[box]?.[dia]?.[hora]);
+            btnEliminar.classList.toggle("hidden", esMultiple || !asignacion);
 
             modal.classList.remove("hidden");
         }
-
 
 
         function eliminarAsignacion() {
@@ -3513,29 +3565,110 @@
                 }
                 renderTablaAsignaciones();
             } else {
-                celdasSeleccionadas = [];
                 const [box, dia, hora] = celdaId.split("-");
-                abrirModalAsignacion(box, dia, hora);
+                const asignacion = asignacionesDemo[box]?.[dia]?.[hora];
+                const yaSeleccionada = celdasSeleccionadas.includes(celdaId);
+
+                const tieneEstado = asignacion?.estado && asignacion.estado !== "libre";
+                const tieneMedico = !!asignacion?.medico;
+
+                if (tieneEstado || tieneMedico) {
+                    // Siempre abrir modal individual si tiene estado o médico
+                    abrirModalAsignacion(box, dia, hora);
+                } else if (yaSeleccionada) {
+                    // Si está seleccionada y es libre, abrir modal múltiple
+                    abrirModalAsignacion(box, dia, hora);
+                } else {
+                    // Si no está seleccionada y es libre, abrir modal individual sin borrar selección
+                    abrirModalAsignacion(box, dia, hora);
+                }
             }
         });
 
+        // Métodos para carga desde base de datos
+        async function cargarMedicosDesdeWS() {
+            const soapMessage = `
+        <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cap="http://CapaServicios/">
+            <soapenv:Header/>
+            <soapenv:Body>
+                <cap:WebObtenerTodosMedicos/>
+            </soapenv:Body>
+        </soapenv:Envelope>`;
 
-        document.addEventListener("keyup", function (e) {
-            if (e.key === "Control" && celdasSeleccionadas.length > 0) {
-                const [primera] = celdasSeleccionadas[0].split("-");
-                const [box, dia, hora] = celdasSeleccionadas[0].split("-");
-                abrirModalAsignacion(box, dia, hora);
+            try {
+                const response = await fetch('http://localhost:8080/AsignacionBoxesWS/WebServiceMedicosService', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/xml;charset=UTF-8',
+                        'SOAPAction': ''
+                    },
+                    body: soapMessage
+                });
+
+                const textResponse = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(textResponse, 'text/xml');
+
+                const medicosXML = xmlDoc.getElementsByTagName('medicos');
+                const medicos = [];
+
+                for (let i = 0; i < medicosXML.length; i++) {
+                    const medico = medicosXML[i];
+                    medicos.push({
+                        nombre: medico.getElementsByTagName('nombre')[0]?.textContent || '',
+                        especialidad: medico.getElementsByTagName('especialidad')[0]?.textContent || '',
+                        correo: medico.getElementsByTagName('correo')[0]?.textContent || ''
+                    });
+                }
+
+                console.log("Médicos parseados:", medicos);
+                renderMedicosTable(medicos);
+                listaMedicosCompleta = medicos;
+
+            } catch (error) {
+                console.error('Error al cargar médicos desde el WebService:', error);
             }
-        });
+        }
 
 
-        document.addEventListener("click", function (e) {
-            const tabla = document.getElementById("tablaAsignaciones");
-            if (!tabla.contains(e.target)) {
-                celdasSeleccionadas = [];
-                renderTablaAsignaciones();
+        async function cargarEspecialidadesDesdeWS() {
+            const soapMessage = `
+                    <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cap="http://CapaServicios/">
+                    <soapenv:Header/>
+                    <soapenv:Body>
+                    <cap:WebObtenerEspecialidades/>
+                    </soapenv:Body>
+                    </soapenv:Envelope>`;
+
+            try {
+                const response = await fetch('http://localhost:8080/AsignacionBoxesWS/WebServiceMedicosService', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/xml;charset=UTF-8',
+                        'SOAPAction': ''
+                    },
+                    body: soapMessage
+                });
+
+                const text = await response.text();
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(text, 'text/xml');
+
+                const especialidades = xmlDoc.getElementsByTagName('return');
+                const select = document.getElementById('filtroEspecialidad');
+
+                for (let i = 0; i < especialidades.length; i++) {
+                    const esp = especialidades[i].textContent;
+                    const option = document.createElement('option');
+                    option.value = esp;
+                    option.textContent = esp;
+                    select.appendChild(option);
+                }
+
+            } catch (error) {
+                console.error('Error al cargar especialidades:', error);
             }
-        });
+        }
 
     </script>
 </body>
